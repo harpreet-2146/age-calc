@@ -3,69 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>age calc</title>
+    <title>Age Calculator</title>
+
+    <!-- Link to external CSS for styling -->
     <link rel="stylesheet" href="agecalc.css">
 </head>
 <body>
+
+    <!-- Main container for the calculator -->
     <div class="container">
         <div class="calculator">
             <h1>AGE CALCULATOR</h1>
+
+            <!-- Input area: user enters birth date -->
             <div class="input-box">
                 <input type="date" id="date" placeholder="YYYY-MM-DD">
-                <button onclick="calculateAge()">calculate</button>
+                <button onclick="calculateAge()">Calculate</button>
             </div> 
+
+            <!-- This is where the result will be displayed -->
             <div class="result"></div>
         </div>
     </div>
     
     <script> 
-        let userInput=document.getElementById('date');
-        userInput.max= new Date().toISOString().split("T")[0];
-        let result=document.querySelector(".result");
+        // Get the input element where user selects date
+        let userInput = document.getElementById('date');
 
-function calculateAge(){
-    let birthDate=new Date(userInput.value);
+        // Prevents selecting a future date by setting max date to today
+        userInput.max = new Date().toISOString().split("T")[0];
 
-    let d1= birthDate.getDate();
-    let m1= birthDate.getMonth()+1;
-    let y1= birthDate.getFullYear();
+        // Get the div where we'll show the final result
+        let result = document.querySelector(".result");
 
-    let today= new Date();
+        // This function is called when the "Calculate" button is clicked
+        function calculateAge() {
+            // Create a date object from user's input
+            let birthDate = new Date(userInput.value);
 
-    let d2=today.getDate();
-    let m2=today.getMonth()+1;
-    let y2=today.getFullYear();
+            // Extract day, month, and year from the birth date
+            let d1 = birthDate.getDate();
+            let m1 = birthDate.getMonth() + 1; // JS months are 0-based
+            let y1 = birthDate.getFullYear();
 
-    let d3,m3,y3;
-    y3=y2-y1;
-    if(m2>=m1){
-        m3=m2-m1;
-    }
-    else{
-        y3--;
-        m3=12+m2-m1;
-    }
-    if(d2>=d1){
-        d3=d2-d1;
-    }else{
-        m3--;
-        d3=getDaysInMonth(y1,m1)+d2-d1;
-    }
-    if(m3<0){
-        m3=11;
-        y3--;
-    }
-    result.innerHTML=`you are ${y3} years, ${m3} months and ${d3} days old`;
-}
+            // Get today's date details
+            let today = new Date();
+            let d2 = today.getDate();
+            let m2 = today.getMonth() + 1;
+            let y2 = today.getFullYear();
 
-function getDaysInMonth(year,month){
-    return new Date(year,month,0).getDate();
-}
+            // Variables to hold calculated age
+            let d3, m3, y3;
 
+            // Start with year difference
+            y3 = y2 - y1;
+
+            // If current month is before birth month, subtract 1 year and calculate months accordingly
+            if (m2 >= m1) {
+                m3 = m2 - m1;
+            } else {
+                y3--; // Birthday month hasn’t occurred yet
+                m3 = 12 + m2 - m1; // Borrow 12 months from the year
+            }
+
+            // If current day is before birth day, subtract a month and adjust days accordingly
+            if (d2 >= d1) {
+                d3 = d2 - d1;
+            } else {
+                m3--; // Borrow 1 month
+                // Borrow days from the previous month to add to current date
+                d3 = getDaysInMonth(y2, m2 - 1) + d2 - d1;
+            }
+
+            // Extra check in case month went below 0
+            if (m3 < 0) {
+                m3 = 11;
+                y3--;
+            }
+
+            // Show the result using innerHTML (updates the content inside the result div)
+            result.innerHTML = `You are ${y3} years, ${m3} months and ${d3} days old.`;
+        }
+
+        // Helper function: returns the number of days in a given month of a year
+        function getDaysInMonth(year, month) {
+            return new Date(year, month, 0).getDate();
+        }
 
     </script>
-
-
 
 </body>
 </html>
